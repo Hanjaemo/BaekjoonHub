@@ -14,7 +14,7 @@ public class Main {
         s = br.readLine();
         int[] result = new int[ALPHABET_COUNT];
         for (int i = 0; i < s.length(); i++) {
-            for (int j = 0; j < alphabet.length; j++) {
+            for (int j = 0; j < ALPHABET_COUNT; j++) {
                 if (s.charAt(i) == alphabet[j]) {
                     result[j] += 1;
                 }
