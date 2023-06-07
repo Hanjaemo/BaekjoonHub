@@ -9,7 +9,7 @@ public class Main {
     private static final StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
-
+        
         while (true) {
             String input = br.readLine();
 
@@ -22,7 +22,7 @@ public class Main {
         System.out.println(sb);
     }
 
-    public static String solve(String input) {
+    private static String solve(String input) {
         Stack<Character> stack = new Stack<>();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
@@ -43,6 +43,10 @@ public class Main {
             }
         }
 
+        return printYesOrNo(stack);
+    }
+
+    private static String printYesOrNo(Stack<Character> stack) {
         if (stack.isEmpty()) {
             return "yes";
         } else {
