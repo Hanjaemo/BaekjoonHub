@@ -7,82 +7,65 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private static StringTokenizer st;
-    private static int row, col;
-    private static int[][] miro;
-    private static final Queue<Pair> queue = new LinkedList<>();
-    private static final int[] dx = {1, 0, -1, 0};
-    private static final int[] dy = {0, 1, 0, -1};
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static Queue<Pair> queue = new LinkedList<>();
+    static int[] dx = {1, 0, -1, 0};
+    static int[] dy = {0, 1, 0, -1};
 
     public static void main(String[] args) throws IOException {
-        setMiroSize();
-        setMiro();
-        bfs();
-    }
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-    private static void setMiroSize() throws IOException {
-        st = new StringTokenizer(br.readLine());
-        row = Integer.parseInt(st.nextToken());
-        col = Integer.parseInt(st.nextToken());
-    }
-
-    private static void setMiro() throws IOException {
-        miro = new int[row][col];
-        for (int i = 0; i < row; i++) {
+        int[][] map = new int[n][m];
+        for (int i = 0; i < n; i++) {
             String[] split = br.readLine().split("");
-            for (int j = 0; j < col; j++) {
-                miro[i][j] = Integer.parseInt(split[j]);
+            for (int j = 0; j < m; j++) {
+                map[i][j] = Integer.parseInt(split[j]);
+            }
+        }
+
+        init(n, m, map);
+        bfs(map);
+
+        System.out.println(map[n - 1][m - 1]);
+    }
+
+    private static void init(int n, int m, int[][] map) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (map[i][j] == 1) {
+                    queue.offer(new Pair(j, i));
+                    return;
+                }
             }
         }
     }
 
-    private static void bfs() {
-        boolean[][] visit = new boolean[row][col];
-        int[][] dist = new int[row][col];
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (miro[i][j] == 0 || visit[i][j]) {
+    private static void bfs(int[][] map) {
+        while (!queue.isEmpty()) {
+            Pair polled = queue.poll();
+            for (int i = 0; i < 4; i++) {
+                int nx = polled.x + dx[i];
+                int ny = polled.y + dy[i];
+                if (nx < 0 || nx >= map[0].length || ny < 0 || ny >= map.length) {
                     continue;
                 }
-                queue.offer(new Pair(i, j));
-                visit[i][j] = true;
-                dist[i][j] = 0;
-                while (!queue.isEmpty()) {
-                    Pair pair = queue.poll();
-                    for (int k = 0; k < 4; k++) {
-                        int nx = pair.getX() + dx[k];
-                        int ny = pair.getY() + dy[k];
-                        if (nx < 0 || nx >= row || ny < 0 || ny >= col) {
-                            continue;
-                        }
-                        if (miro[nx][ny] == 1 && !visit[nx][ny]) {
-                            queue.offer(new Pair(nx, ny));
-                            visit[nx][ny] = true;
-                            dist[nx][ny] = dist[pair.getX()][pair.getY()] + 1;
-                        }
-                    }
+                if (map[ny][nx] == 1) {
+                    queue.offer(new Pair(nx, ny));
+                    map[ny][nx] = map[polled.y][polled.x] + 1;
                 }
             }
         }
-        System.out.println(dist[row - 1][col - 1] + 1);
     }
 }
 
 class Pair {
-    private int x;
-    private int y;
+    int x;
+    int y;
 
     public Pair(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
