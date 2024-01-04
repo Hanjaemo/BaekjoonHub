@@ -6,54 +6,42 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static Queue<Pair> queue = new LinkedList<>();
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
+    static int[][] arr;
+    static int[] dRow = {0, 1, 0, -1};
+    static int[] dCol = {1, 0, -1, 0};
 
     public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
 
-        int[][] map = new int[n][m];
-        for (int i = 0; i < n; i++) {
+        arr = new int[n + 1][m + 1];
+        for (int i = 1; i <= n; i++) {
             String[] split = br.readLine().split("");
-            for (int j = 0; j < m; j++) {
-                map[i][j] = Integer.parseInt(split[j]);
+            for (int j = 1; j <= m; j++) {
+                arr[i][j] = Integer.parseInt(split[j - 1]);
             }
         }
 
-        init(n, m, map);
-        bfs(map);
-
-        System.out.println(map[n - 1][m - 1]);
+        bfs(1, 1);
+        System.out.println(arr[n][m]);
     }
 
-    private static void init(int n, int m, int[][] map) {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (map[i][j] == 1) {
-                    queue.offer(new Pair(j, i));
-                    return;
-                }
-            }
-        }
-    }
-
-    private static void bfs(int[][] map) {
+    private static void bfs(int r, int c) {
+        Queue<Pair> queue = new LinkedList<>();
+        queue.offer(new Pair(r, c));
         while (!queue.isEmpty()) {
-            Pair polled = queue.poll();
+            Pair now = queue.poll();
             for (int i = 0; i < 4; i++) {
-                int nx = polled.x + dx[i];
-                int ny = polled.y + dy[i];
-                if (nx < 0 || nx >= map[0].length || ny < 0 || ny >= map.length) {
+                int nr = now.r + dRow[i];
+                int nc = now.c + dCol[i];
+                if (nr <= 0 || nr > arr.length - 1 || nc <= 0 || nc > arr[0].length - 1) {
                     continue;
                 }
-                if (map[ny][nx] == 1) {
-                    queue.offer(new Pair(nx, ny));
-                    map[ny][nx] = map[polled.y][polled.x] + 1;
+                if (arr[nr][nc] == 1) {
+                    arr[nr][nc] = arr[now.r][now.c] + 1;
+                    queue.offer(new Pair(nr, nc));
                 }
             }
         }
@@ -61,11 +49,11 @@ public class Main {
 }
 
 class Pair {
-    int x;
-    int y;
+    int r;
+    int c;
 
-    public Pair(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Pair(int r, int c) {
+        this.r = r;
+        this.c = c;
     }
 }
