@@ -1,14 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringJoiner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int t = Integer.parseInt(br.readLine());
 
-        int[] arr = {500, 60, 10};
+        int[] arr = {300, 60, 10};
         int[] counts = new int[3];
         while (t > 0) {
             if (t % 10 != 0) {
