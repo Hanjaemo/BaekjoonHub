@@ -12,12 +12,11 @@ public class Main {
             // 층 k
             // 호 n
             // dp 배열 초기화
-                // dp[i][0] = 0
+                // dp[i][1] = 1
                 // dp[0][j] = j
             // for (i=1~k)
                 // for (j=1~n)
-                    // for (o=1~j)
-                        // dp[i][j] += dp[i-1][o]
+                    // dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
             // dp[k][n] 출력
         for (int testCase = 0; testCase < t; testCase++) {
             int k = Integer.parseInt(br.readLine());
@@ -25,15 +24,13 @@ public class Main {
             int[][] dp = new int[k + 1][n + 1];
             for (int i = 0; i <= k; i++) {
                 for (int j = 0; j <= n; j++) {
-                    dp[i][0] = 0;
+                    dp[i][1] = 1;
                     dp[0][j] = j;
                 }
             }
             for (int i = 1; i <= k; i++) {
                 for (int j = 1; j <= n; j++) {
-                    for (int o = 1; o <= j; o++) {
-                        dp[i][j] += dp[i - 1][o];
-                    }
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
                 }
             }
             System.out.println(dp[k][n]);
