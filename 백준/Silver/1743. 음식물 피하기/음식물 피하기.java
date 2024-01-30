@@ -11,6 +11,7 @@ public class Main {
     static boolean[][] visited;
     static int[] dRow = {1, 0, -1, 0};
     static int[] dCol = {0, 1, 0, -1};
+    static int depth;
 
     public static void main(String[] args) throws IOException {
         // 통로의 세로 길이 row, 가로 길이 col, 음식물 쓰레기 개수 k
@@ -35,18 +36,37 @@ public class Main {
         // visited 초기화
         visited = new boolean[row + 1][col + 1];
 
-        // graph를 순회하며 방문하지 않은 좌표 중에서 음쓰가 존재하는 곳 bfs 탐색
         int max = 0;
+        depth = 0;
+        // graph를 순회하며 방문하지 않은 좌표 중에서 음쓰가 존재하는 곳 dfs/bfs 탐색
         for (int i = 1; i <= row; i++) {
             for (int j = 1; j <= col; j++) {
                 if (!visited[i][j] && graph[i][j] == 1) {
-                    max = Math.max(max, bfs(i, j));
+                    dfs(i, j);
+                    max = Math.max(max, depth);
+                    depth = 0;
                 }
             }
         }
 
         // max 출력
         System.out.println(max);
+    }
+
+    public static void dfs(int r, int c) {
+        visited[r][c] = true;
+        depth++;
+
+        for (int d = 0; d < 4; d++) {
+            int nRow = r + dRow[d];
+            int nCol = c + dCol[d];
+            if (nRow < 1 || nRow > row || nCol < 1 || nCol > col) {
+                continue;
+            }
+            if (!visited[nRow][nCol] && graph[nRow][nCol] == 1) {
+                dfs(nRow, nCol);
+            }
+        }
     }
 
     public static int bfs(int r, int c) {
