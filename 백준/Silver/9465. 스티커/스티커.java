@@ -28,14 +28,7 @@ public class Main {
                 dp[1][i] = Math.max(max1, dp[1][i - 2]) + sticker[1][i];
             }
 
-            int max = 0;
-            for (int[] ints : dp) {
-                for (int anInt : ints) {
-                    max = Math.max(max, anInt);
-                }
-            }
-
-            System.out.println(max);
+            System.out.println(Math.max(dp[0][n], dp[1][n]));
         }
     }
 }
