@@ -1,52 +1,54 @@
 import java.util.*;
 
 class Solution {
-    static int[] arr;
+    static boolean[] visited;
+    static List<List<Integer>> graph = new ArrayList<>();
+    static int answer = 0;
     
     public int solution(int n, int[][] computers) {
-        arr = new int[n];
-        for (int i=0;i<n;i++) {
-            arr[i] = i;
+        visited = new boolean[computers.length];
+        
+        for (int i=0;i<computers.length;i++) {
+            for (int j=0;j<computers[i].length;j++) {
+                graph.add(new ArrayList<>());
+            }
         }
         
         for (int i=0;i<computers.length;i++) {
             for (int j=0;j<computers[i].length;j++) {
-                if (i == j) {
-                    continue;
-                }
                 if (computers[i][j] == 1) {
-                    union(i, j);
+                    graph.get(i).add(j);
                 }
             }
         }
-                
-        Set<Integer> set = new HashSet<>();
-        for (int i=0;i<n;i++) {
-            set.add(find(arr[i]));
+        
+        for (int i=0;i<computers.length;i++) {
+            bfs(i);
         }
         
-        return set.size();
+        return answer;
     }
     
-    public int find(int node) {
-        if (node == arr[node]) {
-            return node;
-        }
-        return arr[node] = find(arr[node]);
-    }
-    
-    public void union(int a, int b) {
-        a = find(a);
-        b = find(b);
-        
-        if (a == b) {
+    public void bfs(int node) {
+        if (visited[node]) {
             return;
         }
         
-        if (a < b) {
-            arr[b] = a;
-        } else {
-            arr[a] = b;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(node);
+        visited[node] = true;
+        
+        while (!queue.isEmpty()) {
+            int now = queue.poll();
+            for (int i=0;i<graph.get(now).size();i++) {
+                int adj = graph.get(now).get(i);
+                if (!visited[adj]) {
+                    visited[adj] = true;
+                    queue.add(adj);
+                }
+            }
         }
+        
+        answer++;
     }
 }
