@@ -1,5 +1,6 @@
-select r2.food_type, r2.rest_id, r2.rest_name, r2.favorites from (
-    select food_type, max(favorites) as favorites from rest_info
-    group by food_type
-) as r1 join rest_info as r2 on r1.food_type = r2.food_type and r1.favorites = r2.favorites
-order by r2.food_type desc
+# 음식종류별로 즐겨찾기수가 가장 많은 식당
+
+select r.food_type, r.rest_id, r.rest_name, r.favorites from rest_info as r
+join (select food_type, max(favorites) as favorites from rest_info
+group by food_type) as f on r.food_type = f.food_type and r.favorites = f.favorites
+order by food_type desc
