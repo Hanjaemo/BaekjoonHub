@@ -48,7 +48,6 @@ class Solution {
         boolean[][] visited = new boolean[102][102];
         queue.add(new Pair(charX, charY));
         visited[charY][charX] = true;
-        map[charY][charX] = 0;
         
         while (!queue.isEmpty()) {
             Pair now = queue.poll();
