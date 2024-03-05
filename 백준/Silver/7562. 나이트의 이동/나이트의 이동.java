@@ -6,86 +6,67 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private static StringTokenizer st;
-    private static int[][] board;
-    private static final Queue<Pair> queue = new LinkedList<>();
-    private static final int[] dx = {-2, -2, -1, -1, 1, 1, 2, 2};
-    private static final int[] dy = {-1, 1, -2, 2, -2, 2, -1, 1};
+    static int length;
+    static int[][] map;
+    static boolean[][] visited;
+    static int[] dRow = {1, 2, 1, 2, -1, -2, -1, -2};
+    static int[] dCol = {2, 1, -2, -1, 2, 1, -2, -1};
 
     public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int testCase = Integer.parseInt(br.readLine());
-        for (int i = 0; i < testCase; i++) {
-            int l = Integer.parseInt(br.readLine());
-            setBoard(l);
+
+        for (int t = 0; t < testCase; t++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            int nextX = Integer.parseInt(st.nextToken());
-            int nextY = Integer.parseInt(st.nextToken());
-            System.out.println(bfs(nextX, nextY));
-            cleanBoard();
-            queue.clear();
+            length = Integer.parseInt(st.nextToken());
+
+            map = new int[length][length];
+            visited = new boolean[length][length];
+
+            st = new StringTokenizer(br.readLine());
+            int sr = Integer.parseInt(st.nextToken());
+            int sc = Integer.parseInt(st.nextToken());
+
+            st = new StringTokenizer(br.readLine());
+            int er = Integer.parseInt(st.nextToken());
+            int ec = Integer.parseInt(st.nextToken());
+
+            bfs(sr, sc, er, ec);
+            System.out.println(map[er][ec]);
         }
     }
 
-    private static void setBoard(int l) throws IOException {
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int x = Integer.parseInt(st.nextToken());
-        int y = Integer.parseInt(st.nextToken());
-        board = new int[l][l];
-        for (int i = 0; i < l; i++) {
-            for (int j = 0; j < l; j++) {
-                if (i == x && j == y) {
-                    board[i][j] = 1;
-                    queue.offer(new Pair(i, j));
-                }
-            }
-        }
-    }
+    public static void bfs(int sr, int sc, int er, int ec) {
+        Queue<Pair> queue = new LinkedList<>();
+        queue.add(new Pair(sr, sc));
+        visited[sr][sc] = true;
 
-    private static int bfs(int nextX, int nextY) {
         while (!queue.isEmpty()) {
-            Pair p = queue.poll();
-            for (int i = 0; i < 8; i++) {
-                int nx = p.getX() + dx[i];
-                int ny = p.getY() + dy[i];
-                if (nx < 0 || nx >= board.length || ny < 0 || ny >= board.length) {
+            Pair now = queue.poll();
+            if (now.r == er && now.c == ec) {
+                return;
+            }
+            for (int d = 0; d < 8; d++) {
+                int nr = now.r + dRow[d];
+                int nc = now.c + dCol[d];
+                if (nr < 0 || nr >= length || nc < 0 || nc >= length) {
                     continue;
                 }
-                if (board[nx][ny] == 0) {
-                    board[nx][ny] = board[p.getX()][p.getY()] + 1;
-                    queue.offer(new Pair(nx, ny));
-                }
-                if (nx == nextX && ny == nextY) {
-                    return board[nx][ny] - 1;
+                if (!visited[nr][nc] && map[nr][nc] == 0) {
+                    visited[nr][nc] = true;
+                    queue.add(new Pair(nr, nc));
+                    map[nr][nc] = map[now.r][now.c] + 1;
                 }
             }
         }
-        return 0;
-    }
-
-    private static void cleanBoard(){
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board.length; j++) {
-                board[i][j] = 0;
-            }
     }
 }
 
 class Pair {
-    private int x;
-    private int y;
+    int r, c;
 
-    public Pair(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public Pair(int r, int c) {
+        this.r = r;
+        this.c = c;
     }
 }
