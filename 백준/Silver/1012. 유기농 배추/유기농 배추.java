@@ -6,71 +6,66 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int row, col;
-    static int[][] map;
-    static boolean[][] visited;
     static int[] dRow = {1, 0, -1, 0};
     static int[] dCol = {0, 1, 0, -1};
+    static int answer = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int testCase = Integer.parseInt(br.readLine());
-
         for (int t = 0; t < testCase; t++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            col = Integer.parseInt(st.nextToken());
-            row = Integer.parseInt(st.nextToken());
-            int cnt = Integer.parseInt(st.nextToken());
-
-            map = new int[row][col];
-            for (int i = 0; i < cnt; i++) {
+            int col = Integer.parseInt(st.nextToken());
+            int row = Integer.parseInt(st.nextToken());
+            int cntOfPoints = Integer.parseInt(st.nextToken());
+            int[][] map = new int[row][col];
+            for (int i = 0; i < cntOfPoints; i++) {
                 st = new StringTokenizer(br.readLine());
                 int c = Integer.parseInt(st.nextToken());
                 int r = Integer.parseInt(st.nextToken());
                 map[r][c] = 1;
             }
 
-            int answer = 0;
-            visited = new boolean[row][col];
+            boolean[][] visited = new boolean[row][col];
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
                     if (map[i][j] == 1 && !visited[i][j]) {
-                        bfs(i, j);
+                        bfs(map, visited, i, j);
                         answer++;
                     }
                 }
             }
-
             System.out.println(answer);
+            answer = 0;
         }
     }
 
-    public static void bfs(int r, int c) {
-        Queue<Pair> queue = new LinkedList<>();
-        queue.add(new Pair(r, c));
+    public static void bfs(int[][] map, boolean[][] visited, int r, int c) {
+        Queue<Point> queue = new LinkedList<>();
+        queue.add(new Point(r, c));
         visited[r][c] = true;
 
         while (!queue.isEmpty()) {
-            Pair now = queue.poll();
+            Point now = queue.poll();
             for (int d = 0; d < 4; d++) {
                 int nr = now.r + dRow[d];
                 int nc = now.c + dCol[d];
-                if (nr < 0 || nr >= row || nc < 0 || nc >= col) {
+                if (nr < 0 || nr >= map.length || nc < 0 || nc >= map[0].length) {
                     continue;
                 }
                 if (!visited[nr][nc] && map[nr][nc] == 1) {
+                    queue.add(new Point(nr, nc));
                     visited[nr][nc] = true;
-                    queue.add(new Pair(nr, nc));
                 }
             }
         }
     }
 }
 
-class Pair {
+class Point {
     int r, c;
 
-    public Pair(int r, int c) {
+    public Point(int r, int c) {
         this.r = r;
         this.c = c;
     }
