@@ -1,54 +1,54 @@
 import java.util.*;
 
 class Solution {
-    static int[] lion;
-    static int max = -1;
-    static List<int[]> list = new ArrayList<>();
+    static int max = 0;
+    static List<int[]> wins = new ArrayList<>();
     
     public int[] solution(int n, int[] info) {
-        lion = new int[info.length];
-        backtracking(info, 0, 0, n);
-        
-        if (list.size() == 0) {
-            return new int[] {-1};
+        dfs(info, new int[info.length], n, 0, 0);
+        if (wins.isEmpty()) {
+            return new int[]{-1};
         }
         
-        Collections.sort(list, (o1, o2) -> {
+        Collections.sort(wins, (a, b) -> {
             for (int i=10;i>=0;i--) {
-                if (o1[i] != o2[i]) {
-                    return o2[i] - o1[i];
+                if (a[i] != b[i]) {
+                    return b[i] - a[i];
                 }
             }
             return 0;
         });
+        for (int[] win : wins) {
+            System.out.println(Arrays.toString(win));
+        }
         
-        return list.get(0);
+        
+        return wins.get(0);
     }
     
-    public void backtracking(int[] info, int depth, int start, int n) {
-        if (depth == n) {
-            int totalPeach = 0;
+    public void dfs(int[] info, int[] lion, int n, int arrow, int start) {
+        if (arrow == n) {
+            int totalInfo = 0;
             int totalLion = 0;
-            for (int i=0;i<=10;i++) {
+            for (int i=0;i<lion.length;i++) {
                 if (lion[i] == 0 && info[i] == 0) {
                     continue;
                 }
-                int score = 10-i;
                 if (lion[i] > info[i]) {
-                    totalLion += score;
+                    totalLion += 10-i;
                 } else {
-                    totalPeach += score;
+                    totalInfo += 10-i;
                 }
             }
             
-            if (totalLion > totalPeach) {
-                int scoreDiff = totalLion - totalPeach;
-                if (max < scoreDiff) {
-                    max = scoreDiff;
-                    list.clear();
-                    list.add(lion.clone());
-                } else if (max == scoreDiff) {
-                    list.add(lion.clone());
+            if (totalLion > totalInfo) {
+                if (max < totalLion-totalInfo) {
+                    max = totalLion-totalInfo;
+                    wins.clear();
+                    wins.add(Arrays.copyOf(lion, lion.length));
+                }
+                if (max == totalLion-totalInfo) {
+                    wins.add(Arrays.copyOf(lion, lion.length));
                 }
             }
             
@@ -60,9 +60,20 @@ class Solution {
                 continue;
             }
             lion[i]++;
-            backtracking(info, depth+1, i, n);
+            dfs(info, lion,n,  arrow+1, i);
             lion[i]--;
         }
-        
     }
+    
+    // public boolean isSmallThan(int[] lion) {
+    //     if (answer == null) {
+    //         return true;
+    //     }
+    //     for (int i=10;i>=0;i--) {
+    //         if (answer[i] > lion[i]) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 }
