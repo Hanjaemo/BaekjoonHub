@@ -18,9 +18,7 @@ public class Main {
         int answer = Math.abs(n - 100);
         for (int i = 0; i < 1000000; i++) {
             String num = String.valueOf(i);
-            if (containsDisable(num, disable)) {
-                continue;
-            } else {
+            if (isAvailable(num, disable)) {
                 answer = Math.min(answer, Math.abs(n - i) + num.length());
             }
         }
@@ -28,12 +26,12 @@ public class Main {
         System.out.println(answer);
     }
 
-    public static boolean containsDisable(String s, String[] disable) {
+    public static boolean isAvailable(String s, String[] disable) {
         for (String x : disable) {
             if (s.contains(x)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
