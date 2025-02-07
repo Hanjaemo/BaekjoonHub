@@ -21,14 +21,14 @@ public class Main {
         int max = 0;
         Set<Integer> set = new HashSet<>();
         for (int s = 0; s < n; s++) {
-            int e = (s + k - 1) % n;
+            int e = s + k - 1;
             set.clear();
 
-            if (s > e) {
+            if (e >= n) {
                 for (int i = s; i < n; i++) {
                     set.add(belt[i]);
                 }
-                for (int i = 0; i <= e; i++) {
+                for (int i = 0; i <= e - n; i++) {
                     set.add(belt[i]);
                 }
             } else {
@@ -37,9 +37,7 @@ public class Main {
                 }
             }
             set.add(c);
-            if (set.size() > max) {
-                max = set.size();
-            }
+            max = Math.max(max, set.size());
         }
 
         System.out.println(max);
