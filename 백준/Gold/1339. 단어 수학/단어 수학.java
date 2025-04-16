@@ -8,35 +8,28 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
-
-        String[] inputs = new String[n];
+        String[] words = new String[n];
+        int maxLen = 0;
         for (int i = 0; i < n; i++) {
-            inputs[i] = br.readLine();
+            words[i] = br.readLine();
+            maxLen = Math.max(maxLen, words[i].length());
         }
 
-        Arrays.sort(inputs, (a, b) -> b.length() - a.length());
+        Arrays.sort(words, (a, b) -> b.length() - a.length());
 
-        int maxLen = inputs[0].length();
         char[][] chars = new char[n][maxLen];
         for (int i = 0; i < n; i++) {
-            String input = inputs[i];
-            int idx = maxLen - input.length();
-            int idxOfInput = 0;
+            String word = words[i];
+            int idx = maxLen - word.length();
+            int idxOfWord = 0;
             for (int j = 0; j < idx; j++) {
                 chars[i][j] = '.';
             }
             for (int j = idx; j < maxLen; j++) {
-                chars[i][j] = input.charAt(idxOfInput);
-                idxOfInput++;
+                chars[i][j] = word.charAt(idxOfWord);
+                idxOfWord++;
             }
         }
-
-//        for (char[] aChar : chars) {
-//            for (char c : aChar) {
-//                System.out.print(c + " ");
-//            }
-//            System.out.println();
-//        }
 
         Integer[] arr = new Integer[26];
         Arrays.fill(arr, 0);
