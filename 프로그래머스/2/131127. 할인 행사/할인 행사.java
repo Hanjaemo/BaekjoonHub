@@ -1,35 +1,39 @@
 import java.util.*;
 
 class Solution {
+    private static final int MEMBER_AUTH_DAY = 10;
+    
     public int solution(String[] want, int[] number, String[] discount) {
-        int answer = 0;
+        Integer[] boxedNumber = Arrays.stream(number).boxed().toArray(Integer[]::new);
+        Arrays.sort(boxedNumber, Collections.reverseOrder());
+        int maxNumber = boxedNumber[0];
         
-        for (int i=0;i<=discount.length-10;i++) {
-            Map<String, Integer> map = new HashMap<>();
-            for (int j=0;j<want.length;j++) {
-                map.put(want[j], number[j]);
-            }
-            
-            String[] discountCopy = Arrays.copyOf(discount, discount.length);
-            for (int j=i;j<i+10;j++) {
-                if (map.containsKey(discountCopy[j])) {
-                    map.put(discountCopy[j], map.get(discountCopy[j]) - 1);
-                }
-                
-            }
-            
-            boolean isRight = true;
-            for (String key : map.keySet()) {
-                if (map.get(key) != 0) {
-                    isRight = false;
+        int answer = 0;
+        for (int i=0;i<=discount.length-MEMBER_AUTH_DAY;i++) { // 0~4
+            int start = i;
+            int end = i+MEMBER_AUTH_DAY-1;
+            int cnt = 0;
+            int[] count = new int[number.length];
+            for (int j=start;j<=end;j++) { // 0~9
+                for (int k=0;k<want.length;k++) {
+                    if (want[k].equals(discount[j])) {
+                        count[k]++;
+                        break;
+                    }
                 }
             }
-            
-            if (isRight) {
+            boolean isSatisfied = true;
+            for (int j=0;j<number.length;j++) {
+                if (number[j] > count[j]) {
+                    isSatisfied = false;
+                    break;
+                }
+            }
+            if (isSatisfied) {
                 answer++;
             }
         }
-        
+
         return answer;
     }
 }
