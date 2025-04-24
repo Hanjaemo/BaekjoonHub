@@ -2,48 +2,48 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] queue1, int[] queue2) {
-        Queue<Long> q1 = new LinkedList<>();
-        for (int i=0;i<queue1.length;i++) {
-            q1.add((long) queue1[i]);
-        }
-        Queue<Long> q2 = new LinkedList<>();
-        for (int i=0;i<queue2.length;i++) {
-            q2.add((long) queue2[i]);
-        }
-        
-        long total = sum(queue1) + sum(queue2);
-        if (total % 2 != 0) {
-            return -1;
-        }
-        
         int answer = 0;
-        long sum1 = sum(queue1);
-        long sum2 = sum(queue2);
-        while (sum1 != sum2) {
-            if (answer > (queue1.length + queue2.length) * 2) {
-                return -1;
+        Queue<Integer> queueA = new LinkedList<>();
+        Queue<Integer> queueB = new LinkedList<>();
+        long sumA = 0;
+        long sumB = 0;
+        for (int i=0;i<queue1.length;i++) {
+            int nowA = queue1[i];
+            sumA += nowA;
+            queueA.add(nowA);
+            int nowB = queue2[i];
+            sumB += nowB;
+            queueB.add(nowB);
+        }
+        
+        if (sumA == sumB) {
+            return 0;
+        }
+        
+        int size = queue1.length + queue2.length + 1;
+        
+        while (answer <= size && !queueA.isEmpty() && !queueB.isEmpty()) {
+            if (sumA > sumB) {
+                int polled = queueA.poll();
+                sumA -= polled;
+                sumB += polled;
+                queueB.add(polled);
+            } else if (sumA < sumB) {
+                int polled = queueB.poll();
+                sumB -= polled;
+                sumA += polled;
+                queueA.add(polled);
             }
-            if (sum1 > total / 2) {
-                sum1 -= q1.peek();
-                sum2 += q1.peek();
-                q2.add(q1.poll());
-                answer++;
-            } else {
-                sum2 -= q2.peek();
-                sum1 += q2.peek();
-                q1.add(q2.poll());
-                answer++;
+            
+            answer++;
+            
+            if (sumA == sumB) {
+                return answer;
             }
         }
         
-        return answer;
-    }
-    
-    public long sum(int[] queue) {
-        long sum = 0;
-        for (int i=0;i<queue.length;i++) {
-            sum+=queue[i];
-        }
-        return sum;
+        return -1;
     }
 }
+
+// 각 큐의 합을 같게 만드는 최소 작업 횟수 구하기
