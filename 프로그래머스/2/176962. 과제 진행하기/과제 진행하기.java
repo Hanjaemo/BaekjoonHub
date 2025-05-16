@@ -1,77 +1,65 @@
-import java.time.*;
 import java.util.*;
+import java.time.*;
 
 class Solution {
     public String[] solution(String[][] plans) {
-        List<Homework> homeworks = new ArrayList<>();
-        for (int i=0;i<plans.length;i++) {
-            String name = plans[i][0];
-            String[] splitTime = plans[i][1].split(":");
-            int start = Integer.parseInt(splitTime[0]) * 60 + Integer.parseInt(splitTime[1]);
-            int playtime = Integer.parseInt(plans[i][2]);
-            homeworks.add(new Homework(name, start, playtime));
-        }
+        List<String> answer = new ArrayList<>();
+        Arrays.sort(plans, (a, b) -> a[1].compareTo(b[1]));
         
-        Collections.sort(homeworks);
-        
-        // for (Homework h : homeworks) {
-        //     System.out.println(h.name + "," + h.start + "," + h.playtime);
-        // }
-        
-        Deque<Homework> stack = new ArrayDeque<>();
-        List<String> result = new ArrayList<>();
-        
-        for (int i=0;i<homeworks.size()-1;i++) {
-            Homework now = homeworks.get(i);
-            Homework next = homeworks.get(i+1);
-            int end = now.start + now.playtime;
-            if (end > next.start) {
-                stack.push(now);
-                now.playtime = end - next.start;
-            } else {
-                result.add(now.name);
-                int remain = next.start - end;
-                while (!stack.isEmpty() && remain > 0) {
-                    Homework last = stack.peek();
-                    int pt = last.playtime;
-                    last.playtime -= remain;
-                    remain -= pt;
-                    
-                    if (last.playtime <= 0) {
-                        result.add(stack.pop().name);
+        Deque<OngoingTask> ongoingTasks = new ArrayDeque<>();
+        for (int i=0;i<plans.length-1;i++) {
+            String[] now = plans[i];
+            String[] next = plans[i+1];
+            
+            LocalTime nowStartTime = convertToLocalTime(now[1]);
+            LocalTime nextStartTime = convertToLocalTime(next[1]);
+            int nowMinute = nowStartTime.getHour()*60+nowStartTime.getMinute();
+            int nextMinute = nextStartTime.getHour()*60+nextStartTime.getMinute();
+            int diffTime = Math.abs(nowMinute-nextMinute);
+            int nowPlaytime = Integer.parseInt(now[2]);
+            
+            // 두 시간 차이가 현재 과제의 playtime보다 클 경우, 남는 시간 동안 진행중이던 과제 처리
+            if (diffTime >= nowPlaytime) {
+                answer.add(now[0]);
+                int remainTime = diffTime - nowPlaytime;
+                while (remainTime > 0 && !ongoingTasks.isEmpty()) {
+                    if (remainTime < ongoingTasks.peek().remainPlaytime) {
+                        OngoingTask prev = ongoingTasks.peek();
+                        prev.remainPlaytime -= remainTime;
+                        remainTime = 0;
+                    } else {
+                        OngoingTask prev = ongoingTasks.pop();
+                        remainTime -= prev.remainPlaytime;
+                        answer.add(prev.name);
                     }
                 }
+            } else {
+                ongoingTasks.push(new OngoingTask(now[0], nowPlaytime-diffTime));
             }
         }
         
-        result.add(homeworks.get(homeworks.size()-1).name);
-        
-        while (!stack.isEmpty()) {
-            result.add(stack.pop().name);
+        answer.add(plans[plans.length-1][0]);
+        while (!ongoingTasks.isEmpty()) {
+            answer.add(ongoingTasks.pop().name);
         }
         
-        String[] answer = new String[result.size()];
-        for (int i=0;i<result.size();i++) {
-            answer[i] = result.get(i);
-        }
-        
-        return answer;
+        return answer.stream().map(s -> s).toArray(String[]::new);
+    }
+    
+    public LocalTime convertToLocalTime(String string) {
+        String[] splitArr = string.split(":");
+        return LocalTime.of(Integer.parseInt(splitArr[0]), Integer.parseInt(splitArr[1]));
     }
 }
 
-class Homework implements Comparable<Homework> {
+class OngoingTask {
     String name;
-    int start;
-    int playtime;
+    int remainPlaytime;
     
-    public Homework(String n, int s, int p) {
-        name = n;
-        start = s;
-        playtime = p;
-    }
-    
-    @Override
-    public int compareTo(Homework o) {
-        return this.start - o.start;
+    public OngoingTask(String name, int remainPlaytime) {
+        this.name = name;
+        this.remainPlaytime = remainPlaytime;
     }
 }
+
+// 진행 중이던 과제 복원을 위해 stack 사용
