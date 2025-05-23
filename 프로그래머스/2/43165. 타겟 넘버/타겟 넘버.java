@@ -1,21 +1,20 @@
 class Solution {
-    static int count = 0;
+    static int answer = 0;
     public int solution(int[] numbers, int target) {
-        dfs(numbers[0], 0, numbers, target);
-        dfs(-numbers[0], 0, numbers, target);
-        
-        return count;
+        dfs(target, -1*numbers[0], numbers, 1);
+        dfs(target, 1*numbers[0], numbers, 1);
+        return answer;
     }
     
-    public void dfs(int num, int depth, int[] numbers, int target) {
-        if (depth == numbers.length-1) {
+    public void dfs(int target, int num, int[] numbers, int idx) {
+        if (idx == numbers.length) {
             if (num == target) {
-                count++;
+                answer++;
             }
             return;
         }
         
-        dfs(num + numbers[depth+1], depth+1, numbers, target);
-        dfs(num - numbers[depth+1], depth+1, numbers, target);
+        dfs(target, num+numbers[idx]*-1, numbers, idx+1);
+        dfs(target, num+numbers[idx]*1, numbers, idx+1);
     }
 }
