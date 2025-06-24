@@ -1,87 +1,76 @@
 import java.util.*;
 
 class Solution {
-    static Pairs[][] map = new Pairs[11][11];
-    static int[] directions;
-    static int[] dRow = {-1, 1, 0, 0};
-    static int[] dCol = {0, 0, 1, -1};
-    static int answer = 0;
+    static int[] dRow = {-1,1,0,0};
+    static int[] dCol = {0,0,1,-1};
     
     public int solution(String dirs) {
-        directions = new int[dirs.length()];
+        Set<Dir> set = new HashSet<>();
+        Point now = new Point(5, 5);
         for (int i=0;i<dirs.length();i++) {
-            char c = dirs.charAt(i);
-            if (c == 'U') {
-                directions[i] = 0;
-            } else if (c == 'D') {
-                directions[i] = 1;
-            } else if (c == 'R') {
-                directions[i] = 2;
-            } else {
-                directions[i] = 3;
+            char command = dirs.charAt(i);
+            int moveDir = 0;
+            if (command == 'U') {
+                moveDir = 0;
+            } else if (command == 'D') {
+                moveDir = 1;
+            } else if (command == 'R') {
+                moveDir = 2;
+            } else if (command == 'L') {
+                moveDir = 3;
             }
+            
+            int nr = now.r + dRow[moveDir];
+            int nc = now.c + dCol[moveDir];
+            if (nr < 0 || nr >= 11 || nc < 0 || nc >= 11) {
+                continue;
+            }
+            Point next = new Point(nr, nc);
+            set.add(new Dir(now, next));
+            now = next;
         }
         
-        for (int i=0;i<11;i++) {
-            for (int j=0;j<11;j++) {
-                map[i][j] = new Pairs();
-            }
-        }
-        
-        dfs(directions.length, new Pair(5, 5), 0);
-        
-        return answer;
-    }
-    
-    public void dfs(int n, Pair now, int depth) {
-        if (depth == n) {
-            return;
-        }
-        
-        int d = directions[depth];
-        int nr = now.r + dRow[d];
-        int nc = now.c + dCol[d];
-        if (!(nr < 0 || nr >= 11 || nc < 0 || nc >= 11)) {
-            Pair next = new Pair(nr, nc);
-            if (visited(map[nr][nc], now)) {
-                dfs(n, next, depth + 1);
-            } else {
-                answer++;
-                map[nr][nc].add(now);
-                map[now.r][now.c].add(next);
-                dfs(n, next, depth + 1);
-            }
-        } else {
-            dfs(n, now, depth + 1);
-        }
-    }
-    
-    public boolean visited(Pairs pairs, Pair now) {
-        for (Pair p : pairs.set) {
-            if (p.r == now.r && p.c == now.c) {
-                return true;
-            }
-        }
-        return false;
+        return set.size();
     }
 }
 
-class Pair {
-    int r,c;
+class Dir {
+    Point start;
+    Point end;
     
-    public Pair(int r, int c) {
+    public Dir(Point start, Point end) {
+        this.start = start;
+        this.end = end;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        Dir other = (Dir) o;
+        return (start.equals(other.start) && end.equals(other.end)) || (start.equals(other.end) && end.equals(other.start));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start) + Objects.hash(end);
+    }
+}
+
+class Point {
+    int r, c;
+    
+    public Point(int r, int c) {
         this.r = r;
         this.c = c;
     }
-}
-
-class Pairs {
-    Set<Pair> set = new HashSet<>();
     
-    public Pairs() {
+    @Override
+    public boolean equals(Object o) {
+        Point other = (Point) o;
+        return r == other.r && c == other.c;
     }
 
-    public void add(Pair p) {
-        set.add(p);
+    @Override
+    public int hashCode() {
+        return Objects.hash(r, c);
     }
 }
