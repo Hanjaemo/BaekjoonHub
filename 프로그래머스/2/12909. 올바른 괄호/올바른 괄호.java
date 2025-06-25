@@ -2,27 +2,31 @@ import java.util.*;
 
 class Solution {
     boolean solution(String s) {
-        int lefts = 0;
-        int rights = 0;
-        
+        Deque<Character> stack = new ArrayDeque<>();
         for (int i=0;i<s.length();i++) {
             char ch = s.charAt(i);
-            
-            if (ch == '(') {
-                lefts++;
+            if (stack.isEmpty()) {
+                if (ch == ')') {
+                    return false;
+                } else {
+                    stack.push(ch);
+                }
             } else {
-                rights++;
+                if (stack.peek() == '(') {
+                   if (ch == '(') {
+                        stack.push(ch);
+                    } else {
+                        stack.pop();
+                    }
+                }
             }
             
-            if (lefts < rights) {
-                return false;
-            }
         }
-
-        if (lefts != rights) {
+        
+        if (stack.isEmpty()) {
+            return true;
+        } else {
             return false;
         }
-
-        return true;
     }
 }
