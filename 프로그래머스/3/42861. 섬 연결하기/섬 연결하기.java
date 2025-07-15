@@ -2,42 +2,56 @@ import java.util.*;
 
 class Solution {
     public int solution(int n, int[][] costs) {
+        Arrays.sort(costs, (int[] o1, int[] o2) -> o1[2] - o2[2]);
+        
         int[] arr = new int[n];
         for (int i=0;i<n;i++) {
             arr[i] = i;
         }
         
-        Arrays.sort(costs, (o1, o2) -> o1[2] - o2[2]);
-        
         int answer = 0;
         for (int i=0;i<costs.length;i++) {
-            int a = costs[i][0];
-            int b = costs[i][1];
-            int weight = costs[i][2];
-            if (find(arr, arr[a]) == find(arr, arr[b])) {
+            int[] cost = costs[i];
+            if (isEnd(arr)) {
+                break;
+            }
+            if (find(arr, arr[cost[0]]) == find(arr, arr[cost[1]])) {
                 continue;
             }
-            union(arr, a, b);
-            answer += weight;
+            
+            union(arr, cost[0], cost[1]);
+            answer += cost[2];
         }
         
         return answer;
     }
     
     public void union(int[] arr, int a, int b) {
-        a = find(arr, a);
-        b = find(arr, b);
+        a = find(arr, arr[a]);
+        b = find(arr, arr[b]);
+        
         if (a < b) {
             arr[b] = a;
         } else {
-            arr[a] = b;  
-        } 
+            arr[a] = b;
+        }
     }
     
-    public int find(int[] arr, int node) {
-        if (arr[node] == node) {
-            return node;
+    public int find(int[] arr, int n) {
+        if (n == arr[n]) {
+            return n;
         }
-        return arr[node] = find(arr, arr[node]);
+        return arr[n] = find(arr, arr[n]);
+    }
+    
+    public boolean isEnd(int[] arr) {
+        int base = find(arr, arr[0]);
+        for (int i=1;i<arr.length;i++) {
+            if (base != find(arr, i)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
