@@ -10,29 +10,32 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         int k = Integer.parseInt(st.nextToken());
         int n = Integer.parseInt(st.nextToken());
-
-        long[] arr = new long[k];
+        int[] arr = new int[k];
         for (int i = 0; i < k; i++) {
             arr[i] = Integer.parseInt(br.readLine());
         }
 
         Arrays.sort(arr);
 
-        long min = 0;
-        long max = arr[k - 1] + 1;
-        while (min < max) {
-            long m = (min + max) / 2;
-            long cnt = 0;
+        long min = 1;
+        long max = arr[k - 1];
+        long answer = 0;
+        while (min <= max) {
+            long median = (min + max) / 2;
+
+            long sum = 0;
             for (int i = 0; i < k; i++) {
-                cnt += arr[i] / m;
+                sum += arr[i] / median;
             }
-            if (cnt < n) {
-                max = m;
+
+            if (sum < n) {
+                max = median - 1;
             } else {
-                min = m + 1;
+                min = median + 1;
+                answer = median;
             }
         }
 
-        System.out.println(min - 1);
+        System.out.println(answer);
     }
 }
